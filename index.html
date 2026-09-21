@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<!--
+  BBTI 測試網頁(單檔,可放 GitHub Pages 當 index.html)
+  依護理端回饋改版:睡眠環境用語、睡前8小時咖啡因/午休、睡前電子產品、
+  1-5分說明、詳細建議、指標命名一致、放鬆任一≥3、7天窗內≥5天且跨滿7天、
+  歷週可展開含達標說明、日期預設今日鎖未來、分數/時間下拉、可編輯、跨週日期防呆。
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BBTI 測試網頁</title>
+<style>
+  :root{color-scheme:light;--bg:#eef2f9;--card:#fff;--line:#e2e8f0;--pri:#2b6cb0;--ok:#2f855a;--muted:#718096;--warn:#c05621;--err:#c53030;}
+  *{box-sizing:border-box;font-family:"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;}
+  body{margin:0;background:var(--bg);color:#1a202c;line-height:1.6;}
+  .wrap{max-width:1080px;margin:0 auto;padding:16px;}
+  h1{font-size:21px;margin:0 0 2px;text-align:center;} .sub{color:var(--muted);font-size:12.5px;text-align:center;margin-bottom:12px;}
+  .app{display:grid;grid-template-columns:300px 1fr;gap:16px;} @media(max-width:820px){.app{grid-template-columns:1fr;}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  h2{font-size:17px;margin:0 0 12px;color:var(--pri);} h3{font-size:13px;margin:12px 0 6px;color:var(--pri);border-left:3px solid var(--pri);padding-left:7px;}
+  label{display:block;font-size:13px;margin:9px 0 3px;color:#2d3748;font-weight:600;}
+  input,select{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;font-size:15px;background:#fff;}
+  select:disabled{background:#edf2f7;color:#a0aec0;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;} .row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;} .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .tt{display:flex;gap:4px;} .tt select{padding:8px 4px;font-size:14px;}
+  button{background:var(--pri);color:#fff;border:0;padding:12px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;}
+  button:hover{filter:brightness(.93);} button:disabled{background:#a0aec0;cursor:not-allowed;} button.sec{background:#4a5568;} button.ghost{background:#fff;color:var(--pri);border:1px solid var(--pri);} button.danger{background:#c53030;} button.mini{width:auto;padding:5px 9px;font-size:12px;margin:0;}
+  .steps{display:flex;gap:6px;margin-bottom:14px;} .steps div{flex:1;text-align:center;font-size:11.5px;padding:6px 2px;border-radius:20px;background:#e2e8f0;color:var(--muted);} .steps div.act{background:var(--pri);color:#fff;font-weight:700;}
+  .hint{font-size:12px;color:var(--muted);font-weight:400;}
+  .errbox{background:#fff5f5;border:1px solid #feb2b2;color:var(--err);border-radius:9px;padding:9px 11px;font-size:13px;margin-top:10px;display:none;}
+  .warn{color:var(--err);font-size:12px;margin-top:4px;min-height:16px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;} th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:center;} th{color:var(--muted);} .op{color:var(--pri);cursor:pointer;font-weight:700;} .del{color:var(--err);cursor:pointer;font-weight:700;}
+  .prog{font-size:13px;font-weight:700;color:var(--pri);margin-top:8px;text-align:center;}
+  .ind{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:9px;} .ind.on{border-left-color:var(--ok);background:#f0fff4;} .ind.off{opacity:.65;}
+  .ind .t{font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;align-items:center;}
+  .badge{font-size:11px;padding:2px 8px;border-radius:20px;color:#fff;} .badge.y{background:var(--ok);} .badge.n{background:#a0aec0;}
+  .adv{margin:5px 0 2px;font-size:14px;} .why{font-size:11.5px;color:var(--muted);}
+  .summary{background:#ebf8ff;border:1px solid #bee3f8;border-radius:10px;padding:11px 13px;margin-bottom:10px;font-size:14px;}
+  .goal{font-size:12.5px;margin-top:6px;} .g-ok{color:var(--ok);font-weight:700;} .g-no{color:var(--warn);font-weight:700;}
+  .side .box{font-size:12.5px;background:#f7fafc;border:1px solid var(--line);border-radius:9px;padding:9px 10px;margin-bottom:8px;}
+  .side .wk{border:1px solid var(--line);border-radius:9px;padding:9px 10px;margin-bottom:8px;cursor:pointer;} .side .wk b{color:var(--pri);} .side .conv{color:var(--muted);font-size:11.5px;margin-top:4px;} .side .detail{margin-top:6px;font-size:12px;}
+  .hide{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>BBTI 測試網頁</h1>
+  <div class="sub">睡眠行為介入自我評估 · 24 小時制 · 7 天窗內至少填 5 天 · 可多位受試者</div>
+  <div class="app">
+    <div class="side"><div class="card">
+      <h2>受試者管理</h2>
+      <label>選擇受試者</label><select id="subjSelect" onchange="onSelectSubject()"></select>
+      <button class="ghost" onclick="newSubject()">＋ 新增受試者</button>
+      <button class="danger" onclick="clearActive()">🗑 清除此受試者資料</button>
+      <hr style="border:none;border-top:1px solid var(--line);margin:12px 0">
+      <h3>累積資料</h3><div id="sideSubject" class="box">尚未選擇受試者</div><div id="sideCurrent" class="box">—</div>
+      <h3>歷週統整 <span class="hint">(點擊展開)</span></h3><div id="sideHistory"><div class="hint">尚無完成的週</div></div>
+    </div></div>
+
+    <div class="main">
+      <div class="steps"><div id="s1" class="act">1 基本資料</div><div id="s2">2 睡眠日誌</div><div id="s3">3 會談</div><div id="s4">4 統整結果</div></div>
+
+      <div class="card" id="page-basic">
+        <h2>基本資料</h2><div class="hint">新增/編輯此受試者基本資料(每位僅需填一次)。</div>
+        <label>姓名或編號</label><input id="subjName" placeholder="例:王小明 或 A01">
+        <div class="row"><div><label>年齡</label><input type="number" id="age" min="1" max="120" placeholder="例:45"></div>
+          <div><label>性別</label><select id="gender"><option value="">請選擇</option><option value="F">女</option><option value="M">男</option></select></div></div>
+        <div class="row"><div><label>是否在工作</label><select id="work" onchange="syncShift()"><option value="">請選擇</option><option value="working">有工作</option><option value="none">未工作</option><option value="retired">退休</option></select></div>
+          <div><label>是否輪班制</label><select id="shift"><option value="false">否(非輪班)</option><option value="true">是(輪班制)</option></select></div></div>
+        <div class="errbox" id="basicErr"></div>
+        <button onclick="goDiary()">儲存並下一步 →</button>
+      </div>
+
+      <div class="card hide" id="page-diary">
+        <h2>睡眠日誌 <span class="hint" id="diaryWeek"></span></h2>
+        <div class="hint">每天一筆。7 天觀察窗內至少填 5 天,且需跨滿第 7 天才能進入會談;日期不可重複、不可填未來、不可早於前一週。</div>
+        <label>日期</label><input type="date" id="d_date" onchange="liveDateCheck()"><div class="warn" id="dateWarn"></div>
+        <div class="row4" style="margin-top:2px">
+          <div><label>躺床</label><div class="tt"><select id="bed_h"></select><select id="bed_m"></select></div></div>
+          <div><label>睡著</label><div class="tt"><select id="onset_h"></select><select id="onset_m"></select></div></div>
+          <div><label>醒來</label><div class="tt"><select id="wake_h"></select><select id="wake_m"></select></div></div>
+          <div><label>下床</label><div class="tt"><select id="outbed_h"></select><select id="outbed_m"></select></div></div>
+        </div>
+        <div class="row3">
+          <div><label>中途醒來(分)</label><input type="number" id="d_waso" value="0" min="0"></div>
+          <div><label>睡眠品質<span class="hint">(1很差~5很好)</span></label><select id="d_qual"></select></div>
+          <div><label>白天精神<span class="hint">(1很差~5很好)</span></label><select id="d_alert"></select></div>
+        </div>
+        <div class="errbox" id="dayErr"></div>
+        <button id="addBtn" onclick="addDay()">＋ 新增這一天</button>
+        <table id="logTable"><thead><tr><th>日期</th><th>SOL</th><th>WASO</th><th>SE%</th><th>品質</th><th>精神</th><th>操作</th></tr></thead><tbody></tbody></table>
+        <div class="prog" id="prog">0 天</div>
+        <button id="toConv" disabled onclick="goConv()">進入會談</button>
+        <button class="ghost" onclick="show('basic')">← 回基本資料</button>
+      </div>
+
+      <div class="card hide" id="page-conv"><h2 id="convHead">會談</h2><div id="convBody"></div>
+        <button onclick="goResult()">產生本週統整 →</button><button class="ghost" onclick="show('diary')">← 回睡眠日誌</button></div>
+
+      <div class="card hide" id="page-result"><h2 id="resHead">本週統整</h2><div id="out"></div>
+        <button onclick="editConv()" class="ghost">← 修改本週會談並重算</button>
+        <button onclick="nextWeek()">開始下一週睡眠日誌 →</button>
+        <button class="sec" onclick="shareLink()">🔗 複製分享連結</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== CONFIG ===== */
+const CONFIG={WINDOW:7, MIN_DAYS:5, SOL_TH:30, WASO_TH:30, SE_TH:85, TST_MIN:360, MOOD_TH:3, QMIN:1, QMAX:5};
+const STORE_KEY="bbti_webapp_v4";
+/* ===== 多受試者儲存 ===== */
+let store={subjects:[], activeId:null};
+try{const s=localStorage.getItem(STORE_KEY); if(s)store=JSON.parse(s);}catch(e){}
+function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(store));}catch(e){}}
+function active(){return store.subjects.find(s=>s.id===store.activeId)||null;}
+function genId(){return "s"+Date.now()+Math.floor(Math.random()*1000);}
+let prefillConv=null;   // 編輯會談時暫存前次答案
+
+/* ===== 工具 ===== */
+function pad(n){return String(n).padStart(2,"0");}
+function toMin(t){const m=/^(\d{1,2}):(\d{2})$/.exec(t||"");return m?(+m[1])*60+(+m[2]):null;}
+function diff(a,b){let d=b-a;if(d<0)d+=1440;return d;}
+function avg(a){const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((p,c)=>p+c,0)/v.length:null;}
+function todayStr(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function addDays(s,n){const d=new Date(s+"T00:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function dayDiff(a,b){return Math.round((new Date(a+"T00:00:00")-new Date(b+"T00:00:00"))/86400000);}
+function allUsedDates(){const A=active();const s=new Set();if(!A)return s;A.current.forEach(d=>s.add(d.date));A.history.forEach(w=>w.days.forEach(d=>s.add(d.date)));return s;}
+function prevMaxDate(){const A=active();let mx=null;if(!A)return null;A.history.forEach(w=>w.days.forEach(d=>{if(!mx||d.date>mx)mx=d.date;}));return mx;}
+function weekStart(){const A=active();return (A&&A.current.length)?A.current[0].date:null;}   // current 已排序,第一筆最早
+function getT(f){return pad(+document.getElementById(f+"_h").value)+":"+pad(+document.getElementById(f+"_m").value);}
+
+/* ===== 下拉選項 ===== */
+function fillSelects(){
+  const hs=Array.from({length:24},(_,i)=>`<option value="${i}">${pad(i)}</option>`).join("");
+  const ms=Array.from({length:12},(_,i)=>`<option value="${i*5}">${pad(i*5)}</option>`).join("");
+  const def={bed:[23,0],onset:[23,30],wake:[6,30],outbed:[7,0]};
+  ["bed","onset","wake","outbed"].forEach(f=>{document.getElementById(f+"_h").innerHTML=hs;document.getElementById(f+"_m").innerHTML=ms;document.getElementById(f+"_h").value=def[f][0];document.getElementById(f+"_m").value=def[f][1];});
+  const sc=[3,3];  // 品質、精神 預設 3
+  document.getElementById("d_qual").innerHTML=[1,2,3,4,5].map(v=>`<option value="${v}">${v}</option>`).join("");
+  document.getElementById("d_alert").innerHTML=document.getElementById("d_qual").innerHTML;
+  document.getElementById("d_qual").value=sc[0];document.getElementById("d_alert").value=sc[1];
+}
+
+/* ===== 步驟切換 ===== */
+function show(step){["basic","diary","conv","result"].forEach(s=>document.getElementById("page-"+s).classList.add("hide"));
+  document.getElementById("page-"+step).classList.remove("hide");
+  const map={basic:"s1",diary:"s2",conv:"s3",result:"s4"};["s1","s2","s3","s4"].forEach(id=>document.getElementById(id).classList.remove("act"));
+  document.getElementById(map[step]).classList.add("act");window.scrollTo(0,0);}
+
+/* ===== 受試者選單 ===== */
+function renderSelect(){const sel=document.getElementById("subjSelect");
+  let o=store.subjects.map(s=>`<option value="${s.id}" ${s.id===store.activeId?"selected":""}>${s.name||"(未命名)"}</option>`).join("");
+  sel.innerHTML=store.subjects.length?o:`<option value="">尚無受試者</option>`;}
+function onSelectSubject(){store.activeId=document.getElementById("subjSelect").value;persist();loadActiveIntoForm();show(active()?"diary":"basic");renderDiary();renderSide();}
+function newSubject(){store.activeId=null;clearBasicForm();renderSelect();show("basic");}
+function clearBasicForm(){subjName.value="";age.value="";gender.value="";work.value="";shift.value="false";shift.disabled=false;}
+function clearActive(){if(!active()){alert("目前沒有選取的受試者");return;}
+  if(!confirm(`確定清除受試者「${active().name}」的全部資料?`))return;
+  store.subjects=store.subjects.filter(s=>s.id!==store.activeId);store.activeId=store.subjects.length?store.subjects[0].id:null;persist();
+  if(active()){loadActiveIntoForm();renderDiary();show("diary");}else{clearBasicForm();show("basic");}renderSide();}
+function loadActiveIntoForm(){const A=active();if(!A)return;subjName.value=A.name;age.value=A.subject.age;gender.value=A.subject.gender;work.value=A.subject.work;shift.value=String(A.subject.shift);syncShift();}
+
+/* ===== 基本資料 ===== */
+function syncShift(){const w=document.getElementById("work").value,sh=document.getElementById("shift");
+  if(w==="none"||w==="retired"){sh.value="false";sh.disabled=true;}else{sh.disabled=false;}}
+function goDiary(){const eb=document.getElementById("basicErr"),errs=[];
+  if(!subjName.value.trim())errs.push("請輸入姓名或編號");
+  const a=+age.value; if(!a||a<1||a>120)errs.push("請輸入正確年齡");
+  if(!gender.value)errs.push("請選擇性別"); if(!work.value)errs.push("請選擇工作狀態");
+  if(errs.length){eb.style.display="block";eb.innerHTML="⚠️ "+errs.join("、");return;}
+  eb.style.display="none";
+  const shiftVal=(work.value==="none"||work.value==="retired")?false:(shift.value==="true");
+  const subj={age:a,gender:gender.value,work:work.value,shift:shiftVal};
+  if(active()){active().name=subjName.value.trim();active().subject=subj;}
+  else{const A={id:genId(),name:subjName.value.trim(),subject:subj,weekNo:1,current:[],history:[]};store.subjects.push(A);store.activeId=A.id;}
+  persist(); renderSide(); renderDiary(); show("diary");}
+
+/* ===== 日期界限與即時檢查 ===== */
+function dateBounds(){
+  const A=active();const today=todayStr();const pmax=prevMaxDate();const ws=weekStart();
+  let lo, hi;
+  if(ws){ lo=ws; hi=addDays(ws,CONFIG.WINDOW-1); if(hi>today)hi=today; }   // 已開週:限在觀察窗內、且不超過今天
+  else { lo=pmax?addDays(pmax,1):"2000-01-01"; hi=today; }                  // 新一週第一天:須晚於前一週、不超過今天
+  return {lo,hi};
+}
+function applyDateBounds(){const {lo,hi}=dateBounds();const el=document.getElementById("d_date");el.min=lo;el.max=hi;
+  if(!el.value||el.value<lo||el.value>hi){ // 預設:第一天=今天(若允許),否則=下限
+    el.value=(hi>=todayStr()&&todayStr()>=lo)?todayStr():lo;
+  }
+  liveDateCheck();}
+function liveDateCheck(){const w=document.getElementById("dateWarn");const A=active();const v=d_date.value;w.textContent="";
+  if(!A||!v)return;
+  const {lo,hi}=dateBounds();
+  if(v>todayStr()){w.textContent="不可填未來日期";return;}
+  if(v<lo){w.textContent=`此日期早於允許範圍(需 ≥ ${lo})`;return;}
+  if(v>hi){w.textContent=`超過本週觀察窗(需 ≤ ${hi})`;return;}
+  if(allUsedDates().has(v)){w.textContent="此日期已填寫過(已鎖定,請換一天)";return;}
+}
+
+/* ===== 每日紀錄:錯誤審查 ===== */
+function validateDay(bedS,onsetS,wakeS,outbedS,waso,dateS){
+  const errs=[];const {lo,hi}=dateBounds();
+  if(!dateS)errs.push("請選擇日期");
+  else{
+    if(dateS>todayStr())errs.push("日期不可為未來");
+    if(allUsedDates().has(dateS))errs.push("此日期已在某一週輸入過,請勿重複");
+    if(dateS<lo)errs.push(`日期需 ≥ ${lo}(不可早於前一週或本週觀察窗起點)`);
+    if(dateS>hi)errs.push(`日期需 ≤ ${hi}(超過本週 7 天觀察窗)`);
+  }
+  const bed=toMin(bedS),on=diff(bed,toMin(onsetS)),wk=diff(bed,toMin(wakeS)),ob=diff(bed,toMin(outbedS));
+  if(on>wk)errs.push("『睡著』晚於『醒來』,順序不合理");
+  if(wk>ob)errs.push("『醒來』晚於『下床』,順序不合理");
+  if(ob>20*60)errs.push("總躺床超過 20 小時,請確認時間");
+  if(waso<0)errs.push("中途醒來(WASO)分鐘不可為負");
+  if(waso>=(wk-on))errs.push(`中途醒來(WASO ${waso}分)超過睡眠時段,請確認`);
+  if(on>8*60)errs.push(`入睡耗時(SOL ${Math.round(on)}分)超過 8 小時,請確認`);
+  const SOL=on,TIB=ob,TST=(wk-on)-waso,SE=TIB?Math.round(TST/TIB*100):null;
+  if(TST<=0)errs.push("計算出的總睡眠時數 ≤ 0,請確認時間");
+  return{errs,rec:{SOL,WASO:waso,TST,TIB,SE}};
+}
+function addDay(){
+  const A=active();if(!A){alert("請先建立/選擇受試者");return;}
+  const eb=document.getElementById("dayErr");
+  const waso=+d_waso.value||0, qual=+d_qual.value, alert_=+d_alert.value;
+  const extra=[];
+  if(!Number.isInteger(qual)||qual<CONFIG.QMIN||qual>CONFIG.QMAX)extra.push("睡眠品質需為 1-5");
+  if(!Number.isInteger(alert_)||alert_<CONFIG.QMIN||alert_>CONFIG.QMAX)extra.push("白天精神需為 1-5");
+  const v=validateDay(getT("bed"),getT("onset"),getT("wake"),getT("outbed"),waso,d_date.value);
+  const errs=[...v.errs,...extra];
+  if(errs.length){eb.style.display="block";eb.innerHTML="⚠️ 無法新增,請修正:<br>• "+errs.join("<br>• ");return;}
+  eb.style.display="none";
+  A.current.push({date:d_date.value,bed:getT("bed"),onset:getT("onset"),wake:getT("wake"),outbed:getT("outbed"),...v.rec,qual,alert:alert_});
+  A.current.sort((a,b)=>a.date<b.date?-1:1);
+  persist(); renderDiary(); renderSide(); applyDateBounds();
+}
+function delDay(i){active().current.splice(i,1);persist();renderDiary();renderSide();applyDateBounds();}
+// 編輯:把該筆載回表單,並先移除;修改後重新新增
+function editDay(i){const A=active();const d=A.current[i];
+  d_date.value=d.date;d_waso.value=d.WASO;d_qual.value=d.qual;d_alert.value=d.alert;
+  ["bed","onset","wake","outbed"].forEach(f=>{const[h,m]=d[f].split(":");document.getElementById(f+"_h").value=+h;document.getElementById(f+"_m").value=+m;});
+  A.current.splice(i,1);persist();renderDiary();renderSide();liveDateCheck();
+  document.getElementById("dayErr").style.display="none";}
+function enterAllowed(A){ // 7天窗內至少5天、且已跨滿第7天(最後日期 - 起點 ≥6)
+  if(A.current.length<CONFIG.MIN_DAYS)return false;
+  const ws=A.current[0].date, mx=A.current[A.current.length-1].date;
+  return dayDiff(mx,ws)>=(CONFIG.WINDOW-1);
+}
+function renderDiary(){const A=active();if(!A)return;
+  diaryWeek.textContent=`(${A.name} · 第 ${A.weekNo} 週)`;
+  const tb=document.querySelector("#logTable tbody");tb.innerHTML="";
+  A.current.forEach((d,i)=>tb.innerHTML+=`<tr><td>${d.date}</td><td>${d.SOL}</td><td>${d.WASO}</td><td>${d.SE}</td><td>${d.qual}</td><td>${d.alert}</td><td><span class="op" onclick="editDay(${i})">編輯</span> · <span class="del" onclick="delDay(${i})">刪</span></td></tr>`);
+  const ok=enterAllowed(A);
+  const ws=A.current.length?A.current[0].date:null, mx=A.current.length?A.current[A.current.length-1].date:null;
+  prog.textContent=A.current.length?`已填 ${A.current.length} 天;觀察窗 ${ws} ~ ${ws?addDays(ws,6):""}(需≥5天且跨滿第7天)`:"尚未填寫";
+  toConv.disabled=!ok;
+  toConv.textContent=ok?"進入會談":(A.current.length<CONFIG.MIN_DAYS?`至少需填 ${CONFIG.MIN_DAYS} 天(目前 ${A.current.length})`:"需跨滿第 7 天(最後一天要到觀察窗第7日)");
+  applyDateBounds();
+}
+
+/* ===== 會談 ===== */
+function goConv(){renderConv();show("conv");}
+function convVal(id,def){return document.getElementById(id)?document.getElementById(id).value:def;}
+function renderConv(){const A=active(),follow=A.weekNo>=2;const p=prefillConv||{};
+  convHead.textContent=follow?`會談(第 ${A.weekNo} 週追蹤)`:"會談(初診評估)";
+  const sel=(v,cur)=>v===cur?"selected":"";
+  let h="";
+  if(follow)h+=`<label>上週建議的執行情形</label><select id="adherence"><option value="done">有做到</option><option value="partial">部分做到</option><option value="no">沒做到</option></select><div class="hint" style="margin:6px 0">追蹤:以下方向若本週有變化請更新。</div>`;
+  else h+=`<div class="hint" style="margin:2px 0 6px">初診:請依實際情形回答。</div>`;
+  h+=`<label>①作息:${follow?"這週":"平日與假日"}的起床時間是否固定?</label><select id="routine_fixed"><option value="true" ${sel(true,p.routine_fixed)}>固定</option><option value="false" ${sel(false,p.routine_fixed)}>不固定</option></select>
+   <div class="row"><div><label>④睡眠環境-聲音</label><select id="env_noise"><option value="quiet" ${sel("quiet",p.env_noise)}>安靜</option><option value="noisy" ${sel("noisy",p.env_noise)}>吵雜</option></select></div>
+     <div><label>④睡眠環境-光線</label><select id="env_light"><option value="dark" ${sel("dark",p.env_light)}>全暗</option><option value="night" ${sel("night",p.env_light)}>有小夜燈</option><option value="bright" ${sel("bright",p.env_light)}>明亮</option></select></div></div>
+   <div class="row"><div><label>③睡前8小時內有無攝取咖啡因</label><select id="caffeine8"><option value="false" ${sel(false,p.caffeine8)}>無</option><option value="true" ${sel(true,p.caffeine8)}>有</option></select></div>
+     <div><label>③睡前8小時內有無午休/小睡</label><select id="nap8"><option value="false" ${sel(false,p.nap8)}>無</option><option value="true" ${sel(true,p.nap8)}>有</option></select></div></div>
+   <div class="row"><div><label>睡前30分或關燈後有無使用電子產品</label><select id="electronics"><option value="false" ${sel(false,p.electronics)}>無</option><option value="true" ${sel(true,p.electronics)}>有</option></select></div>
+     <div><label>⑥白天有無運動>30分鐘</label><select id="exercise30"><option value="true" ${sel(true,p.exercise30)}>有</option><option value="false" ${sel(false,p.exercise30)}>無</option></select></div></div>
+   <label>⑤放鬆:${follow?"目前":""}壓力/焦慮/憂鬱 <span class="hint">(1=無 ~ 5=非常嚴重)</span></label>
+   <div class="row3"><div>${scoreSel("stress",p.stress||3)}</div><div>${scoreSel("anxiety",p.anxiety||2)}</div><div>${scoreSel("depression",p.depression||1)}</div></div>
+   <div class="hint">(②減少躺床由睡眠日誌 SOL/WASO 自動判斷;⑤放鬆為任一分數 ≥3 即建議)</div>`;
+  convBody.innerHTML=h;prefillConv=null;
+}
+function scoreSel(id,val){return `<select id="${id}">`+[["1","1 無"],["2","2 輕"],["3","3 中"],["4","4 重"],["5","5 非常"]].map(([v,t])=>`<option value="${v}" ${(+val===+v)?"selected":""}>${t}</option>`).join("")+`</select>`;}
+
+/* ===== 六大指標引擎(命名一致、詳細建議)===== */
+function assess(x){const out=[];
+  // 1 固定起床時間(不論有無工作;不含固定躺床)
+  const ind1=(!x.routine_fixed)||(x.SE<CONFIG.SE_TH);
+  let a1="每天(含假日)固定同一時間起床,誤差不超過30分鐘;起床後立即離開床、拉開窗簾照光,避免賴床或補眠。"+(x.shift?"輪班者盡量在相近時段起床。":"不論有無固定工作都建議固定起床時間。");
+  out.push({t:"1. 固定起床時間",rec:ind1,adv:ind1?a1:"起床時間已固定且睡眠效率佳,維持即可。",why:`起床固定=${x.routine_fixed}, SE=${Math.round(x.SE)}%`});
+  // 2 減少躺床時間(含刺激控制、電子產品、午休)
+  let a2=[],w2=[],r2=false;
+  if(x.SOL>CONFIG.SOL_TH){a2.push("真正想睡才上床;躺床超過30分鐘仍睡不著就起身到別處做放鬆的事,想睡再回床");w2.push(`SOL=${Math.round(x.SOL)}>${CONFIG.SOL_TH}`);r2=true;}
+  if(x.WASO>CONFIG.WASO_TH){a2.push("半夜醒來超過30分鐘同樣離開床,待有睡意再回床");w2.push(`WASO=${Math.round(x.WASO)}>${CONFIG.WASO_TH}`);r2=true;}
+  if(x.SE<CONFIG.SE_TH&&x.TST>=CONFIG.TST_MIN){a2.push("減少總躺床時間,床只用於睡覺");w2.push(`SE=${Math.round(x.SE)}<${CONFIG.SE_TH}`);r2=true;}
+  if(x.electronics){a2.push("關燈後不在床上滑手機、看電視或平板");w2.push("關燈後用電子產品");r2=true;}
+  if(x.nap8){a2.push("白天(尤其睡前8小時內)避免午休/小睡,把睡意留到晚上;若真的很睏,午休不超過30分鐘");w2.push("睡前8小時內午休");r2=true;}
+  out.push({t:"2. 減少躺床時間(睏了才躺、醒了就起)",rec:r2,adv:r2?a2.join("；")+"。"+(x.TST<CONFIG.TST_MIN?"(註:總睡眠<360分,暫不做躺床限制)":""):"入睡與夜醒尚可,維持刺激控制原則(床只用於睡覺)。",why:w2.join("; ")||`SOL=${Math.round(x.SOL)},WASO=${Math.round(x.WASO)},SE=${Math.round(x.SE)}`});
+  // 3 減少咖啡因攝取(睡前8小時)
+  out.push({t:"3. 減少咖啡因攝取",rec:x.caffeine8,adv:x.caffeine8?"睡前8小時內避免含咖啡因飲品(咖啡、茶、可樂、能量飲、巧克力);可改喝無咖啡因飲品或白開水,若原本量大請逐步減量避免頭痛。":"睡前8小時無咖啡因攝取,維持即可。",why:`睡前8小時咖啡因=${x.caffeine8}`});
+  // 4 維持安靜/光線暗的睡眠環境(只針對睡眠環境,不推白天照光)
+  let a4=[],w4=[],r4=false;
+  if(x.env_noise==="noisy"){a4.push("保持臥室安靜,必要時使用耳塞或白噪音");w4.push("環境吵雜");r4=true;}
+  if(x.env_light==="bright"||x.env_light==="night"){a4.push("睡覺時關燈、全暗(遮光窗簾、關掉小夜燈與3C指示燈)");w4.push(x.env_light==="bright"?"環境明亮":"有小夜燈");r4=true;}
+  out.push({t:"4. 維持安靜/光線暗的睡眠環境",rec:r4,adv:r4?a4.join("；")+"。":"睡眠環境安靜且夠暗,維持即可。",why:w4.join("; ")||"環境正常"});
+  // 5 增加放鬆(任一 ≥3)
+  const mx=Math.max(x.stress||0,x.anxiety||0,x.depression||0),moodRec=mx>=CONFIG.MOOD_TH;
+  out.push({t:"5. 增加放鬆",rec:moodRec,adv:moodRec?"睡前30分鐘進行放鬆:腹式呼吸、漸進式肌肉放鬆、聽輕音樂或按壓神門穴;把煩心的事先寫下來留到白天處理,不帶上床。":"壓力/焦慮/憂鬱皆不高,無需特別放鬆建議。",why:`壓力${x.stress}/焦慮${x.anxiety}/憂鬱${x.depression} 最高=${mx}(任一≥${CONFIG.MOOD_TH}即建議)`});
+  // 6 增加白天活動
+  out.push({t:"6. 增加白天活動",rec:!x.exercise30,adv:!x.exercise30?"白天安排規律運動,每次至少30分鐘(如快走、游泳、騎車);最晚在睡前2-3小時前完成,避免睡前劇烈運動。":"已有運動超過30分鐘,維持即可。",why:`運動>30分=${x.exercise30}`});
+  return out;}
+
+/* ===== 目標達成(SOL/WASO/SE)說明 ===== */
+function goalHtml(sol,waso,se){
+  const g=(ok,txt)=>`<span class="${ok?'g-ok':'g-no'}">${ok?'✅達標':'❌未達標'}</span> ${txt}`;
+  return `<div class="goal">睡眠目標:<br>· 入睡時間 SOL ${Math.round(sol)}分 ${g(sol<30,"(目標<30分:越快入睡越好)")}<br>· 夜間清醒 WASO ${Math.round(waso)}分 ${g(waso<30,"(目標<30分:半夜越少醒越好)")}<br>· 睡眠效率 SE ${Math.round(se)}% ${g(se>=85,"(目標≥85%:躺床時間多用於睡覺)")}</div>`;
+}
+
+/* ===== 本週統整 ===== */
+function convSummaryText(c,adher){const L={quiet:"安靜",noisy:"吵雜",dark:"全暗",night:"小夜燈",bright:"明亮"};
+  let s=`起床${c.routine_fixed?"固定":"不固定"}｜環境:${L[c.env_noise]}/${L[c.env_light]}｜睡前8h咖啡因:${c.caffeine8?"有":"無"}｜午休:${c.nap8?"有":"無"}｜關燈後電子產品:${c.electronics?"有":"無"}｜運動>30分:${c.exercise30?"有":"無"}｜壓${c.stress}/焦${c.anxiety}/鬱${c.depression}`;
+  if(adher)s+=`｜上週執行:${({done:"有做到",partial:"部分",no:"沒做到"})[adher]}`;return s;}
+function collectConv(){return {routine_fixed:convVal("routine_fixed")==="true",env_noise:convVal("env_noise"),env_light:convVal("env_light"),caffeine8:convVal("caffeine8")==="true",nap8:convVal("nap8")==="true",electronics:convVal("electronics")==="true",exercise30:convVal("exercise30")==="true",stress:+convVal("stress"),anxiety:+convVal("anxiety"),depression:+convVal("depression")};}
+function goResult(){const A=active();const g=k=>avg(A.current.map(d=>d[k]));
+  const conv=collectConv();const adher=document.getElementById("adherence")?document.getElementById("adherence").value:null;
+  const x={...A.subject,SOL:g("SOL"),WASO:g("WASO"),SE:g("SE"),TST:g("TST"),...conv};
+  const res=assess(x);
+  A.history.push({week:A.weekNo,days:A.current.slice(),se:Math.round(g("SE")),sol:Math.round(g("SOL")),waso:Math.round(g("WASO")),tst:Math.round(g("TST")),conv,adherence:adher,convText:convSummaryText(conv,adher),recs:res});
+  persist();renderResult();renderSide();show("result");}
+function renderResult(){const A=active();const h=A.history[A.history.length-1];
+  resHead.textContent=`${A.name} · 第 ${h.week} 週統整`;
+  const n=h.recs.filter(r=>r.rec).length;
+  let html=`<div class="summary"><b>第 ${h.week} 週(${h.days.length} 天平均)</b><br>SOL ${h.sol}分、WASO ${h.waso}分、TST ${h.tst}分、SE ${h.se}%<br>建議介入 <b>${n}</b> 項${h.adherence?`;上週執行:${({done:"有做到",partial:"部分",no:"沒做到"})[h.adherence]}`:""}${goalHtml(h.sol,h.waso,h.se)}</div>`;
+  h.recs.forEach(r=>html+=`<div class="ind ${r.rec?'on':'off'}"><div class="t">${r.t} <span class="badge ${r.rec?'y':'n'}">${r.rec?'✅ 建議':'— 無需'}</span></div><div class="adv">${r.adv}</div><div class="why">依據:${r.why}</div></div>`);
+  if(A.history.length>1)html+=`<div class="summary" style="margin-top:10px"><b>跨週趨勢(SE%)</b>:${A.history.map(w=>"W"+w.week+" "+w.se+"%").join(" → ")}</div>`;
+  out.innerHTML=html;}
+// 修改本週會談:把最後一筆歷史退回會談頁編輯後重算
+function editConv(){const A=active();if(!A.history.length)return;const last=A.history[A.history.length-1];
+  if(last.week!==A.weekNo){alert("僅能修改『尚未進入下一週』的本週會談");return;}
+  prefillConv=last.conv; A.current=last.days.slice(); A.history.pop(); persist();
+  renderConv(); show("conv");}
+function nextWeek(){const A=active();A.weekNo+=1;A.current=[];persist();renderDiary();renderSide();applyDateBounds();show("diary");}
+function shareLink(){navigator.clipboard.writeText(location.href).then(()=>alert("已複製此網頁連結,可分享給他人測試")).catch(()=>prompt("複製此連結分享:",location.href));}
+
+/* ===== 側欄(歷週可展開)===== */
+function toggleWk(i){const el=document.getElementById("wkd"+i);if(el)el.classList.toggle("hide");}
+function renderSide(){renderSelect();const A=active();
+  sideSubject.innerHTML=A?`<b>${A.name}</b>｜${A.subject.age}歲｜${A.subject.gender==="F"?"女":"男"}｜${({working:"有工作",none:"未工作",retired:"退休"})[A.subject.work]}${A.subject.shift?"(輪班)":""}`:"尚未選擇受試者";
+  if(A&&A.current.length){const g=k=>avg(A.current.map(d=>d[k]));sideCurrent.innerHTML=`第 <b>${A.weekNo}</b> 週:已填 ${A.current.length} 天<br>平均 SOL ${Math.round(g("SOL"))}｜WASO ${Math.round(g("WASO"))}｜SE ${Math.round(g("SE"))}%`;}
+  else sideCurrent.innerHTML=A?`第 <b>${A.weekNo}</b> 週:尚未填寫`:"—";
+  if(A&&A.history.length)sideHistory.innerHTML=A.history.map((h,i)=>`<div class="wk" onclick="toggleWk(${i})"><b>第 ${h.week} 週</b>(${h.days.length}天)｜SE ${h.se}% SOL ${h.sol} WASO ${h.waso}
+    <div class="conv">會談:${h.convText}</div>
+    <div id="wkd${i}" class="detail hide">${goalHtml(h.sol,h.waso,h.se)}${h.recs.map(r=>`<div style="margin-top:4px">${r.rec?"✅":"—"} <b>${r.t}</b><br><span class="hint">${r.adv}</span></div>`).join("")}</div></div>`).join("");
+  else sideHistory.innerHTML='<div class="hint">尚無完成的週</div>';}
+
+/* ===== 初始化 ===== */
+(function init(){fillSelects();renderSelect();renderSide();
+  if(active()){loadActiveIntoForm();renderDiary();show("diary");}else{show("basic");}})();
+</script>
+</body>
+</html>
